@@ -1,4 +1,3 @@
-// Program.cs
 using JobTrackerAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,16 +9,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddControllers();
 
+// Lägg till Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-// Starta databasen
+// Skapa databasen vid behov
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated(); // Skapar databasen om den inte finns
+    db.Database.EnsureCreated();
 }
 
-app.MapControllers(); // Karta till kontrollern
+// Aktivera Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.MapControllers();
 
 app.Run();
-
